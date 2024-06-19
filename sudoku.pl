@@ -69,19 +69,19 @@ slice([_|Src], Begin, End, Dst) :-
 slice([N|Src], 0, End, [N|Dst]) :-
     End > 0,
     End_ is End - 1,
-    slice(Src, 0, End_, Dst).
+    slice(Src, 0, End_, Dst), !.
 
 block_grid([], _, []).
 block_grid([Row|Grid], Cbegin, Block_) :-
     Cend is Cbegin + 3,
     slice(Row, Cbegin, Cend, BlockRow),
     block_grid(Grid, Cbegin, Block),
-    append(BlockRow, Block, Block_).
+    append(BlockRow, Block, Block_), !.
 
 block(Grid, Rbegin, Cbegin, Block) :-
     Rend is Rbegin + 3,
     slice(Grid, Rbegin, Rend, GridSlice),
-    block_grid(GridSlice, Cbegin, Block).
+    block_grid(GridSlice, Cbegin, Block), !.
 
 notmembers(0, _, []) :- !.
 notmembers(T, L, A) :-
@@ -100,18 +100,18 @@ candidates(Grid, R, C, Cands) :-
     block(Grid, RB, CB, Block),
     append(Row, Col, L_),
     append(L_, Block, List),
-    notmembers(9, List, Cands).
+    notmembers(9, List, Cands), !.
 
 placed_row([_|Row], 0, Cand, [Cand|Row]).
 placed_row([Cell|Row], C, Cand, [Cell|Placed]) :-
     C_ is C - 1,
-    placed_row(Row, C_, Cand, Placed).
+    placed_row(Row, C_, Cand, Placed), !.
 
 placed_grid([Row|Grid], 0, C, Cand, [PlacedRow|Grid]) :-
     placed_row(Row, C, Cand, PlacedRow).
 placed_grid([Row|Grid], R, C, Cand, [Row|Placed]) :-
     R_ is R - 1,
-    placed_grid(Grid, R_, C, Cand, Placed).
+    placed_grid(Grid, R_, C, Cand, Placed), !.
 
 solve(Grid, Grid) :-
     solved_grid(Grid),
